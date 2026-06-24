@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投诉处理流程｜抽水器锈水异味 & 蒜泥器割伤手</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #dbe3ef;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --orange: #f97316;
+      --orange-soft: #fff3e8;
+      --red: #dc2626;
+      --red-soft: #fee2e2;
+      --green: #16a34a;
+      --green-soft: #eaf7ee;
+      --purple: #7c3aed;
+      --purple-soft: #f1eafe;
+      --shadow: 0 18px 45px rgba(31, 41, 55, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.10), transparent 28%),
+        radial-gradient(circle at 90% 0%, rgba(249, 115, 22, 0.12), transparent 25%),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 42px 22px 64px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 54%, #38bdf8 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 34px 36px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -90px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.16);
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: 34px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: rgba(255,255,255,0.88);
+      font-size: 16px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      color: white;
+      font-size: 13px;
+      backdrop-filter: blur(6px);
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    .section-title span {
+      width: 8px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--blue);
+      display: inline-block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(219, 227, 239, 0.9);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .risk {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 66px;
+      height: 26px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .risk.high { background: var(--red-soft); color: var(--red); }
+    .risk.medium { background: var(--orange-soft); color: var(--orange); }
+
+    .issue-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .issue-list li { margin: 6px 0; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 16px;
+      position: relative;
+      min-height: 178px;
+      box-shadow: 0 10px 28px rgba(31, 41, 55, 0.06);
+    }
+
+    .step::after {
+      content: "→";
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 22px;
+      z-index: 2;
+    }
+
+    .step:last-child::after { display: none; }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: white;
+      background: var(--blue);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .matrix th, .matrix td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .matrix th {
+      background: #eef4ff;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .matrix tr:last-child td { border-bottom: none; }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.red { background: var(--red-soft); color: var(--red); }
+    .pill.orange { background: var(--orange-soft); color: var(--orange); }
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); }
+    .pill.purple { background: var(--purple-soft); color: var(--purple); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+
+    .check {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: var(--green-soft);
+      color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .script {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      font-size: 14px;
+    }
+
+    .script h3 {
+      margin: 0 0 10px;
+      color: white;
+      font-size: 17px;
+    }
+
+    .script p { margin: 8px 0; }
+    .script strong { color: #93c5fd; }
+
+    .footer-note {
+      margin-top: 26px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .flow { grid-template-columns: 1fr; }
+      .step::after { display: none; }
+      .grid, .two-col { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 28px; }
+    }
+
+    @media print {
+      body { background: white; }
+      .page { max-width: none; padding: 18px; }
+      .hero, .card, .matrix, .script { box-shadow: none; }
+      .step::after { display: none; }
+    }
+  
+
+    .verify-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .verify-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 250px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verify-card::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      top: -28px;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.08);
+    }
+
+    .verify-num {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: #2563eb;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+    }
+
+    .verify-card h3,
+    .solution-block h3,
+    .policy-box h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #0f172a;
+    }
+
+    .verify-card p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    .verify-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .solution-layout {
+      display: grid;
+      gap: 18px;
+    }
+
+    .solution-block {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px;
+      background: #ffffff;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
+    }
+
+    .policy-box {
+      border-radius: 18px;
+      padding: 20px;
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+      border: 1px solid #bfdbfe;
+    }
+
+    .policy-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .policy-list div {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1200px) {
+      .verify-grid,
+      .policy-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .verify-grid,
+      .policy-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  
+
+    .time-split {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .time-card {
+      border-radius: 22px;
+      padding: 22px;
+      border: 1px solid #e2e8f0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .time-card.fresh {
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 70%);
+      border-color: #bfdbfe;
+    }
+
+    .time-card.used {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 70%);
+      border-color: #fed7aa;
+    }
+
+    .time-card .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .time-card.fresh .tag {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .time-card.used .tag {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .time-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      color: #0f172a;
+    }
+
+    .time-card p,
+    .time-card li {
+      color: #334155;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .time-card ul {
+      margin: 8px 0 14px;
+      padding-left: 20px;
+    }
+
+    .decision {
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: rgba(255,255,255,0.82);
+      border: 1px dashed #cbd5e1;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .notice-line {
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 900px) {
+      .time-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>售后投诉处理流程</h1>
+      <p>适用于“抽水器出现锈水/异味”与“蒜泥器割伤手”等质量、安全类投诉。目标是在安抚客户的同时，快速取证、判断风险等级、给出补偿方案，并推动仓库/品控/供应链闭环整改。</p>
+      <div class="hero-tags">
+        <span class="tag">客户安抚优先</span>
+        <span class="tag">安全风险升级</span>
+        <span class="tag">证据链完整</span>
+        <span class="tag">当天登记追踪</span>
+        <span class="tag">问题闭环复盘</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>一、投诉类型与风险判断</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>抽水器：机器有锈水、有异味 <em class="risk medium">中高风险</em></h3>
+          <ul class="issue-list">
+            <li>可能涉及内部金属件生锈、库存受潮、残留异味、生产/包装污染。</li>
+            <li>客户核心诉求通常是：担心饮水安全、要求退换货、要求赔付。</li>
+            <li>需重点收集：出水照片/视频、异味描述、订单信息、批次/包装码、首次使用时间。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>蒜泥器：容易割伤手 <em class="risk high">高风险</em></h3>
+          <ul class="issue-list">
+            <li>属于人身安全类投诉，若客户已受伤，必须优先升级处理。</li>
+            <li>需确认是否因刀口外露、结构缺陷、说明不清、使用方式不当或配件损坏导致。</li>
+            <li>需重点收集：伤口情况、产品照片/视频、使用过程描述、是否就医、订单与批次信息。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>二、标准处理流程</h2>
+      <div class="flow">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>接收投诉</h3>
+          <p>客服第一时间识别投诉类型，判断是否涉及食品接触、安全伤害、负面评价或平台介入风险。</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>安抚客户</h3>
+          <p>先表达歉意和重视，避免争辩责任；如涉及割伤，先询问伤情并提醒及时清洁/就医。</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>收集证据</h3>
+          <p>索要订单号、产品照片/视频、问题表现、使用时间、批次信息、伤情或锈水异味证明。</p>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <h3>判责与方案</h3>
+          <p>按风险等级给出退换、补发、退款、慰问补偿或升级主管处理，确保方案有记录。</p>
+        </div>
+        <div class="step">
+          <div class="num">5</div>
+          <h3>闭环复盘</h3>
+          <p>登记投诉台账，反馈品控/仓库/供应商，跟进同批次风险，沉淀话术和整改动作。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>三、分场景处理标准</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>场景</th>
+            <th>客服动作</th>
+            <th>建议方案</th>
+            <th>升级条件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill orange">抽水器锈水</span></td>
+            <td>确认是否首次使用、是否清洗、出水颜色、是否有照片/视频；登记批次和订单。</td>
+            <td>优先退换货；必要时补偿优惠券/小额安抚；要求问题件寄回或保留。</td>
+            <td>同批次多起、客户要求赔偿、已差评/投诉平台、疑似饮水安全问题。</td>
+          </tr>
+          <tr>
+            <td><span class="pill purple">抽水器异味</span></td>
+            <td>确认异味类型、是否清洗后仍存在、使用水源、存放环境，收集视频或文字描述。</td>
+            <td>指导清洗后如仍异常可退换；情绪强烈客户可直接退款/换新。</td>
+            <td>异味严重、客户认为影响健康、出现多单集中反馈。</td>
+          </tr>
+          <tr>
+            <td><span class="pill red">蒜泥器割伤手</span></td>
+            <td>先关怀伤情，询问是否流血/就医；收集伤口照片、产品结构照片、使用过程说明。</td>
+            <td>立即升级主管；根据伤情提供退款、补偿、医疗凭证跟进；必要时召回问题件。</td>
+            <td>客户受伤、要求医药费、投诉平台/消协、媒体/差评风险、安全设计疑似缺陷。</td>
+          </tr>
+          <tr>
+            <td><span class="pill blue">仅咨询/担忧</span></td>
+            <td>解释正确使用方式、安全注意事项、清洗方式，主动提供售后保障。</td>
+            <td>提供使用说明、视频引导、必要时补发配件或换新。</td>
+            <td>客户持续不满、提出投诉或涉及产品安全隐患。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section two-col">
+      <div class="card">
+        <h3>四、客服必须收集的信息</h3>
+        <ul class="checklist">
+          <li><span class="check">✓</span><span>订单号、购买平台、收货时间、首次使用时间。</span></li>
+          <li><span class="check">✓</span><span>问题照片/视频：锈水、异味说明、产品破损点、刀口位置、伤口情况。</span></li>
+          <li><span class="check">✓</span><span>产品批次、包装标签、条码、外箱/内包装照片。</span></li>
+          <li><span class="check">✓</span><span>客户当前诉求：退款、换货、补偿、医药费、道歉、撤差评等。</span></li>
+          <li><span class="check">✓</span><span>客服处理记录：沟通时间、承诺方案、主管是否介入、后续跟进时间。</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>五、内部流转要求</h3>
+        <ul class="checklist">
+          <li><span class="check">✓</span><span>售后客服当天登记投诉台账，不得只在聊天窗口口头处理。</span></li>
+          <li><span class="check">✓</span><span>安全伤害类投诉，客服需在30分钟内反馈组长/主管。</span></li>
+          <li><span class="check">✓</span><span>锈水/异味类投诉累计达到3起，应反馈仓库和品控核查库存批次。</span></li>
+          <li><span class="check">✓</span><span>疑似产品结构风险，应暂停同批次争议商品继续外发，等待确认。</span></li>
+          <li><span class="check">✓</span><span>处理完成后补充结果：退款/换货/补偿/寄回检测/客户是否满意。</span></li>
+        </ul>
+      </div>
+    </section>
+
+
+
+
+
+    <section class="section usage-section">
+      <h2 class="section-title"><span></span>四、按使用时间分流判断</h2>
+      <div class="time-split">
+        <div class="time-card fresh">
+          <div class="tag">刚收到 / 首次使用</div>
+          <h3>更偏向到货异常或出厂残留，需要优先安抚</h3>
+          <p>如果客户刚收到就反馈抽水器有明显异味、锈水、内部锈迹，应按较高优先级核实，不建议让客户继续使用。</p>
+          <ul>
+            <li>核实是否首次拆封、是否第一次通水就出现问题</li>
+            <li>确认异味来源：机器本体、硅胶管、包装、桶装水或存放环境</li>
+            <li>确认锈水来源：出水口、管道、金属件、桶内水源</li>
+            <li>凭证充分时，可按疑似质量问题给换新/退货退款</li>
+          </ul>
+          <div class="decision">处理倾向：换新 / 退货退款 / 补发配件 + 安抚补偿</div>
+        </div>
+
+        <div class="time-card used">
+          <div class="tag">使用一段时间后出现</div>
+          <h3>需先排查使用、清洁、存放、水源等因素</h3>
+          <p>机器正常使用通常不会出现明显锈水或强烈异味，已使用一段时间后反馈，需要重点核实是否存在积水、未清洁、环境潮湿、水源污染或配件老化。</p>
+          <ul>
+            <li>询问已使用多久、是否长期未清洗、是否长时间残留积水</li>
+            <li>确认使用水源是否干净，桶装水/水桶是否也有异味或沉淀</li>
+            <li>确认是否放在潮湿、高温、油烟环境，是否有外部污染</li>
+            <li>如有明显产品部件锈蚀或异常，再升级为质量问题处理</li>
+          </ul>
+          <div class="decision">处理倾向：清洁指导 / 补发配件 / 优惠换新 / 视证据退换</div>
+        </div>
+      </div>
+
+      <div class="notice-line">
+        <strong>客服判断原则：</strong>不要一上来默认承认质量问题。先按“收到时间 + 使用时长 + 清洁情况 + 水源环境 + 凭证证据”五个点核实，再给对应方案。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>五、核实步骤拆解</h2>
+      <div class="verify-grid">
+        <div class="verify-card">
+          <div class="verify-num">01</div>
+          <h3>确认投诉产品</h3>
+          <p>先确认客户反馈的是抽水器还是蒜泥器，避免混淆处理口径。</p>
+          <ul>
+            <li>核对订单商品名称、规格、购买时间</li>
+            <li>确认是否为本店售出、是否仍在售后期内</li>
+            <li>询问问题出现时间：首次使用 / 使用一段时间后</li>
+          </ul>
+        </div>
+        <div class="verify-card">
+          <div class="verify-num">02</div>
+          <h3>收集凭证信息</h3>
+          <p>引导客户提供可判断责任和风险等级的材料。</p>
+          <ul>
+            <li>抽水器：锈水、异味、出水口/管道/桶内照片或视频</li>
+            <li>蒜泥器：受伤位置照片、产品刀片/破损位置照片</li>
+            <li>如涉及人身伤害，需确认是否已就医、是否有票据</li>
+          </ul>
+        </div>
+        <div class="verify-card">
+          <div class="verify-num">03</div>
+          <h3>判断问题来源</h3>
+          <p>结合使用场景判断是质量问题、使用问题、运输破损还是存放污染。</p>
+          <ul>
+            <li>抽水器重点核实：是否长期积水、是否首次使用未清洗、是否有金属件生锈</li>
+            <li>蒜泥器重点核实：是否刀片外露、部件松动、使用方式是否符合说明</li>
+            <li>如客户描述存在安全风险，先按高优先级安抚处理</li>
+          </ul>
+        </div>
+        <div class="verify-card">
+          <div class="verify-num">04</div>
+          <h3>匹配处理等级</h3>
+          <p>根据问题严重程度匹配处理方式，避免过度承诺或处理不足。</p>
+          <ul>
+            <li>轻微体验问题：清洗指导、配件补发、优惠补偿</li>
+            <li>疑似质量问题：换新、退货退款、补发整机/配件</li>
+            <li>人身伤害/食品安全风险：升级主管，保留证据，优先安抚</li>
+          </ul>
+        </div>
+        <div class="verify-card">
+          <div class="verify-num">05</div>
+          <h3>记录并闭环</h3>
+          <p>所有投诉都要形成台账，便于后续复盘供应链和客服处理质量。</p>
+          <ul>
+            <li>记录客户诉求、核实材料、处理方案、承诺时间</li>
+            <li>涉及割伤/锈水/异味需标记为重点客诉</li>
+            <li>处理后回访客户是否接受，确认是否需要追加补偿</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>六、我们可以给到的处理方案</h2>
+      <div class="solution-layout">
+        <div class="solution-block">
+          <h3>抽水器：机器有锈水 / 有异味</h3>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>核实结果</th>
+                <th>建议方案</th>
+                <th>客服注意点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>刚收到/首次使用：轻微异味，无锈迹</td>
+                <td>指导清洗、通风晾干；可给小额补偿/优惠券安抚</td>
+                <td>先说明可能存在新机/包装/硅胶件气味，提醒清洗后再观察</td>
+              </tr>
+              <tr>
+                <td>刚收到/首次使用：明显锈水、锈迹或强烈异味</td>
+                <td>按疑似到货异常处理：优先换新或退货退款，必要时补发配件</td>
+                <td>涉及饮水使用，建议暂停使用；收集视频、照片、包装批次</td>
+              </tr>
+              <tr>
+                <td>使用一段时间后：出现异味，但无锈迹</td>
+                <td>先做清洁/水源/存放环境排查；可补发管道、出水配件或给优惠换新</td>
+                <td>不直接承认质量问题，重点核实是否长期积水、未清洗、水桶污染</td>
+              </tr>
+              <tr>
+                <td>使用一段时间后：出现锈水或部件锈蚀</td>
+                <td>结合使用时长和凭证判断；部件异常明显可换新/退款并反馈质检</td>
+                <td>区分产品部件锈蚀与水源/水桶污染，必要时让客户分别拍摄对比</td>
+              </tr>
+              <tr>
+                <td>客户担心健康安全或情绪强烈</td>
+                <td>升级主管安抚；根据凭证给退换、补偿或进一步协商</td>
+                <td>避免承诺“绝对无害/一定质量问题”，统一先暂停使用、优先处理</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="solution-block">
+          <h3>蒜泥器：容易割伤手</h3>
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th>核实结果</th>
+                <th>建议方案</th>
+                <th>客服注意点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>客户未受伤，仅反馈设计锋利/担心割手</td>
+                <td>发送安全使用说明；可提供退换货或优惠补偿</td>
+                <td>强调刀片类产品需谨慎使用，不责怪客户</td>
+              </tr>
+              <tr>
+                <td>客户轻微划伤，有图片反馈</td>
+                <td>优先安抚，可退货退款/换新；酌情给补偿</td>
+                <td>先关心伤口处理，再谈售后方案</td>
+              </tr>
+              <tr>
+                <td>刀片外露、结构松动、产品破损导致割伤</td>
+                <td>升级重点客诉：退款/换新 + 补偿；反馈质检和供应商</td>
+                <td>保留照片、视频、订单、批次号，避免要求客户继续使用</td>
+              </tr>
+              <tr>
+                <td>客户提出医疗费用或较严重伤害</td>
+                <td>立即升级主管；收集就医凭证，按公司规则评估处理</td>
+                <td>不得私自承诺赔付金额，先记录、安抚、升级</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="policy-box">
+          <h3>统一处理底线</h3>
+          <div class="policy-list">
+            <div><strong>先安抚：</strong>涉及饮水安全、割伤风险时，先表达重视和歉意。</div>
+            <div><strong>先止损：</strong>建议客户暂停使用问题产品，避免风险扩大。</div>
+            <div><strong>先取证：</strong>照片、视频、订单、批次、伤情凭证必须留存。</div>
+            <div><strong>再给方案：</strong>根据核实结果给退、换、补、赔、升级的对应处理。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>七、客服参考话术</h2>
+      <div class="script">
+        <h3>抽水器锈水/异味</h3>
+        <p><strong>安抚：</strong>非常抱歉给您带来不好的使用体验，这个情况我们会优先帮您处理，也会同步反馈品控核查。</p>
+        <p><strong>取证：</strong>麻烦您方便的话拍一下出水颜色/产品内部/包装标签照片或视频，我们需要确认是否为个别件异常或批次问题。</p>
+        <p><strong>方案：</strong>核实后我们可以为您安排退换货/退款处理，您这边不用担心售后问题，我们会跟进到处理完成。</p>
+        <br />
+        <h3>蒜泥器割伤手</h3>
+        <p><strong>关怀：</strong>真的很抱歉，先请您确认伤口是否已经清洗消毒，如果伤口较深建议及时就医，身体安全最重要。</p>
+        <p><strong>取证：</strong>为了尽快核实原因，麻烦您提供一下产品刀口位置、使用过程说明以及伤口情况照片，我们会马上升级主管处理。</p>
+        <p><strong>方案：</strong>这类安全问题我们会优先处理，后续可根据实际情况为您安排退款、补偿或进一步售后跟进。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span></span>八、投诉台账字段建议</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>字段</th>
+            <th>填写说明</th>
+            <th>示例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>投诉日期</td>
+            <td>客户首次反馈问题的日期</td>
+            <td>2026-06-24</td>
+          </tr>
+          <tr>
+            <td>产品名称</td>
+            <td>抽水器 / 蒜泥器 / 具体 SKU</td>
+            <td>电动抽水器</td>
+          </tr>
+          <tr>
+            <td>问题类型</td>
+            <td>锈水、异味、割伤手、安全隐患等</td>
+            <td>出水有锈色</td>
+          </tr>
+          <tr>
+            <td>风险等级</td>
+            <td>普通 / 中高 / 高风险</td>
+            <td>中高风险</td>
+          </tr>
+          <tr>
+            <td>处理方案</td>
+            <td>退款、换货、补偿、升级、寄回检测</td>
+            <td>换新+寄回检测</td>
+          </tr>
+          <tr>
+            <td>闭环状态</td>
+            <td>待处理、处理中、已完结、需复盘</td>
+            <td>处理中</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="footer-note">
+      注意：涉及“割伤手、出血、就医、食品/饮水安全”等内容时，建议按高优先级处理，避免简单套用普通退换货话术；所有承诺补偿、医药费、召回等动作需经主管确认后执行。
+    </div>
+  </main>
+</body>
+</html>
