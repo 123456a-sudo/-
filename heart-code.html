@@ -3,285 +3,246 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>炫酷心动代码</title>
+  <title>流畅版炫酷心动代码</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; }
     body {
       font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-      background: radial-gradient(circle at 50% 40%, #30103f 0%, #080516 48%, #02030a 100%);
       color: #fff;
+      background: radial-gradient(circle at 20% 20%, #1b2aff 0%, transparent 28%),
+                  radial-gradient(circle at 80% 30%, #ff2bd6 0%, transparent 28%),
+                  radial-gradient(circle at 50% 90%, #00e5ff 0%, transparent 34%),
+                  linear-gradient(135deg, #050816 0%, #090b22 55%, #12051f 100%);
     }
-    canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
     .stage {
-      position: fixed;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      isolation: isolate;
+    }
+    .aurora {
+      position: absolute;
+      inset: -20%;
+      background: conic-gradient(from 90deg, rgba(0,229,255,.18), rgba(255,43,214,.15), rgba(255,72,114,.14), rgba(0,229,255,.18));
+      filter: blur(50px);
+      opacity: .72;
+      animation: spin 18s linear infinite;
+      z-index: -3;
+    }
+    .grid {
+      position: absolute;
       inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+      z-index: -2;
+    }
+    .card {
+      position: relative;
+      width: min(88vw, 760px);
+      min-height: 560px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 34px;
+      background: rgba(255,255,255,.07);
+      box-shadow: 0 30px 80px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.16);
+      backdrop-filter: blur(12px);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      pointer-events: none;
-      z-index: 2;
+      padding: 42px 24px;
+      overflow: hidden;
     }
-    .heart-wrap {
-      position: relative;
-      width: min(58vw, 430px);
-      height: min(58vw, 430px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter: drop-shadow(0 0 28px rgba(255, 35, 135, .75));
-      animation: heartbeat 1.15s ease-in-out infinite;
-    }
-    .heart {
-      position: relative;
-      width: 48%;
-      height: 48%;
-      background: linear-gradient(135deg, #ff2a8a 0%, #ff0055 42%, #ff7ac8 100%);
-      transform: rotate(-45deg);
-      border-radius: 18% 0 18% 0;
-      box-shadow:
-        0 0 22px rgba(255, 0, 102, .95),
-        0 0 60px rgba(255, 0, 153, .72),
-        inset -14px 14px 24px rgba(255,255,255,.18),
-        inset 12px -18px 28px rgba(80,0,60,.32);
-    }
-    .heart::before,
-    .heart::after {
+    .card::before {
       content: "";
       position: absolute;
-      width: 100%;
-      height: 100%;
-      background: inherit;
-      border-radius: 50%;
-      box-shadow: inherit;
+      inset: -2px;
+      border-radius: inherit;
+      background: linear-gradient(120deg, transparent 0%, rgba(0,229,255,.35) 28%, rgba(255,43,214,.35) 55%, transparent 82%);
+      opacity: .45;
+      z-index: -1;
     }
-    .heart::before { top: -50%; left: 0; }
-    .heart::after { top: 0; left: 50%; }
-    .ring {
-      position: absolute;
-      inset: 2%;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.22);
-      box-shadow: 0 0 28px rgba(0, 215, 255, .5), inset 0 0 28px rgba(255, 40, 140, .25);
-      animation: rotate 8s linear infinite;
+    canvas {
+      width: min(74vw, 520px);
+      height: min(74vw, 520px);
+      max-height: 520px;
+      display: block;
     }
-    .ring::before,
-    .ring::after {
-      content: "";
-      position: absolute;
-      inset: 8%;
-      border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,.22);
-    }
-    .ring::after {
-      inset: 18%;
-      border-color: rgba(0, 234, 255, .25);
-      animation: rotate 5s linear infinite reverse;
-    }
-    .halo {
-      position: absolute;
-      inset: -22%;
-      border-radius: 50%;
-      background: conic-gradient(from 90deg, transparent, rgba(0,245,255,.32), transparent, rgba(255,0,153,.42), transparent);
-      filter: blur(18px);
-      opacity: .78;
-      animation: rotate 6s linear infinite;
-    }
-    .copy {
-      position: fixed;
-      left: 50%;
-      bottom: 7vh;
-      transform: translateX(-50%);
-      z-index: 3;
-      width: min(90vw, 820px);
-      text-align: center;
-      pointer-events: none;
-    }
-    .copy h1 {
-      font-size: clamp(32px, 6vw, 78px);
-      line-height: 1.08;
+    .title {
+      margin-top: -26px;
+      font-size: clamp(34px, 7vw, 62px);
+      font-weight: 900;
       letter-spacing: .08em;
-      background: linear-gradient(90deg, #fff, #ff8dd3, #76f7ff, #fff);
-      background-size: 260% auto;
-      -webkit-background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 28px rgba(255, 60, 160, .35);
-      animation: shine 3.6s linear infinite;
+      text-align: center;
+      text-shadow: 0 0 18px rgba(255,43,214,.55), 0 0 34px rgba(0,229,255,.36);
+      animation: breathe 2.2s ease-in-out infinite;
     }
-    .copy p {
+    .subtitle {
       margin-top: 16px;
-      font-size: clamp(15px, 2.2vw, 24px);
-      color: rgba(236, 248, 255, .86);
-      letter-spacing: .18em;
-      text-shadow: 0 0 14px rgba(0, 220, 255, .42);
+      font-size: clamp(15px, 3vw, 21px);
+      color: rgba(255,255,255,.82);
+      text-align: center;
+      line-height: 1.8;
     }
-    .scanline {
+    .badge {
+      margin-top: 24px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(0,229,255,.12);
+      border: 1px solid rgba(0,229,255,.28);
+      color: #dffbff;
+      font-size: 14px;
+      letter-spacing: .08em;
+    }
+    .tap-heart {
       position: fixed;
-      inset: 0;
-      z-index: 4;
+      left: 0;
+      top: 0;
       pointer-events: none;
-      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.035) 0 1px, transparent 1px 5px);
-      mix-blend-mode: overlay;
-      opacity: .34;
+      font-size: 24px;
+      transform: translate(-50%, -50%);
+      animation: pop 880ms ease-out forwards;
+      text-shadow: 0 0 12px rgba(255,80,140,.8);
+      z-index: 10;
     }
-    .vignette {
-      position: fixed;
-      inset: 0;
-      z-index: 5;
-      pointer-events: none;
-      box-shadow: inset 0 0 160px rgba(0,0,0,.82);
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.035); filter: brightness(1.22); }
     }
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      12% { transform: scale(1.12); }
-      24% { transform: scale(.98); }
-      38% { transform: scale(1.17); }
-      55% { transform: scale(1); }
+    @keyframes pop {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
+      100% { opacity: 0; transform: translate(-50%, -170%) scale(1.45); }
     }
-    @keyframes rotate { to { transform: rotate(360deg); } }
-    @keyframes shine { to { background-position: 260% center; } }
-    @media (max-width: 600px) {
-      .heart-wrap { width: 76vw; height: 76vw; }
-      .copy { bottom: 8vh; }
+    @media (max-width: 640px) {
+      .card { width: 92vw; min-height: 520px; border-radius: 26px; }
+      canvas { width: 86vw; height: 86vw; }
+      .title { margin-top: -16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .aurora, .title { animation: none; }
     }
   </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <div class="stage">
-    <div class="heart-wrap">
-      <div class="halo"></div>
-      <div class="ring"></div>
-      <div class="heart"></div>
-    </div>
-  </div>
-  <div class="copy">
-    <h1>心动加载中</h1>
-    <p>LOVE SIGNAL · 正在为你闪烁</p>
-  </div>
-  <div class="scanline"></div>
-  <div class="vignette"></div>
+  <main class="stage">
+    <div class="aurora"></div>
+    <div class="grid"></div>
+    <section class="card">
+      <canvas id="heart" width="520" height="520" aria-label="流畅霓虹爱心动画"></canvas>
+      <h1 class="title">心动代码</h1>
+      <p class="subtitle">低卡顿流畅版 · 霓虹粒子 · 心跳光效<br />点击屏幕，会有小爱心冒出来</p>
+      <div class="badge">SMOOTH NEON HEART</div>
+    </section>
+  </main>
 
   <script>
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-    let w, h, cx, cy, scale;
+    const canvas = document.getElementById('heart');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.6);
+    const base = 520;
+    canvas.width = base * DPR;
+    canvas.height = base * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    const cx = base / 2;
+    const cy = base / 2 + 8;
+    const isMobile = matchMedia('(max-width: 640px)').matches;
+    const count = isMobile ? 210 : 320;
     const particles = [];
-    const sparks = [];
-    const rand = (a, b) => Math.random() * (b - a) + a;
 
-    function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.width = Math.floor(innerWidth * dpr);
-      h = canvas.height = Math.floor(innerHeight * dpr);
-      canvas.style.width = innerWidth + 'px';
-      canvas.style.height = innerHeight + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cx = innerWidth / 2;
-      cy = innerHeight / 2 - innerHeight * 0.05;
-      scale = Math.min(innerWidth, innerHeight) / 34;
-    }
-
-    function heartPoint(t) {
+    function heartPoint(t, scale) {
       const x = 16 * Math.pow(Math.sin(t), 3);
-      const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-      return { x: cx + x * scale, y: cy + y * scale };
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+      return { x: cx + x * scale, y: cy - y * scale };
     }
 
-    function makeParticle() {
-      const t = rand(0, Math.PI * 2);
-      const p = heartPoint(t);
-      return {
-        x: rand(0, innerWidth),
-        y: rand(0, innerHeight),
-        tx: p.x,
-        ty: p.y,
-        vx: 0,
-        vy: 0,
-        r: rand(1.2, 3.2),
-        hue: rand(310, 380),
-        alpha: rand(.42, .95),
-        pulse: rand(0, Math.PI * 2)
-      };
-    }
-
-    function init() {
-      resize();
-      particles.length = 0;
-      const count = Math.min(900, Math.max(360, Math.floor(innerWidth * innerHeight / 1700)));
-      for (let i = 0; i < count; i++) particles.push(makeParticle());
-      sparks.length = 0;
-      for (let i = 0; i < 120; i++) {
-        sparks.push({
-          x: rand(0, innerWidth), y: rand(0, innerHeight),
-          vx: rand(-.22, .22), vy: rand(-.45, .15),
-          r: rand(.5, 1.9), a: rand(.1, .8), hue: rand(180, 330)
-        });
-      }
+    for (let i = 0; i < count; i++) {
+      const t = Math.random() * Math.PI * 2;
+      const edge = heartPoint(t, 13.2 + Math.random() * 1.8);
+      particles.push({
+        t,
+        x: edge.x,
+        y: edge.y,
+        ox: edge.x,
+        oy: edge.y,
+        r: Math.random() * 1.7 + .8,
+        phase: Math.random() * Math.PI * 2,
+        speed: .55 + Math.random() * .75,
+        hue: Math.random() < .55 ? 335 + Math.random() * 28 : 185 + Math.random() * 25,
+        layer: .55 + Math.random() * .65
+      });
     }
 
     let last = 0;
     function draw(now) {
       const time = now * 0.001;
-      const beat = 1 + Math.sin(time * Math.PI * 2 / 1.15) * 0.035 + Math.max(0, Math.sin(time * Math.PI * 4 / 1.15)) * 0.035;
+      const dt = Math.min(32, now - last || 16);
+      last = now;
+      ctx.clearRect(0, 0, base, base);
 
-      ctx.clearRect(0, 0, innerWidth, innerHeight);
-      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(innerWidth, innerHeight) * .72);
-      bg.addColorStop(0, 'rgba(255, 0, 120, .22)');
-      bg.addColorStop(.42, 'rgba(18, 18, 62, .45)');
-      bg.addColorStop(1, 'rgba(0, 0, 8, .92)');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, innerWidth, innerHeight);
+      const pulse = 1 + Math.sin(time * 2.8) * 0.035;
+      const glow = ctx.createRadialGradient(cx, cy, 20, cx, cy, 230);
+      glow.addColorStop(0, 'rgba(255, 54, 139, .18)');
+      glow.addColorStop(.48, 'rgba(0, 229, 255, .07)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 230, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(pulse, pulse);
+      ctx.translate(-cx, -cy);
 
       ctx.globalCompositeOperation = 'lighter';
-      for (const s of sparks) {
-        s.x += s.vx; s.y += s.vy;
-        if (s.y < -10) { s.y = innerHeight + 10; s.x = rand(0, innerWidth); }
-        if (s.x < -10) s.x = innerWidth + 10;
-        if (s.x > innerWidth + 10) s.x = -10;
+      for (const p of particles) {
+        const orbit = Math.sin(time * p.speed + p.phase) * 4.6 * p.layer;
+        const side = Math.cos(time * .7 + p.phase) * 2.2;
+        const x = p.ox + Math.cos(p.t) * orbit + side;
+        const y = p.oy + Math.sin(p.t) * orbit;
+        const alpha = .45 + .38 * Math.sin(time * 1.7 + p.phase) ** 2;
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 66%, ${alpha})`;
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${s.hue}, 100%, 70%, ${s.a})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.arc(x, y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const t = (i / particles.length) * Math.PI * 2 + Math.sin(time * .65 + i) * .025;
-        const target = heartPoint(t);
-        p.tx = cx + (target.x - cx) * beat;
-        p.ty = cy + (target.y - cy) * beat;
-        p.vx += (p.tx - p.x) * .015;
-        p.vy += (p.ty - p.y) * .015;
-        p.vx *= .86;
-        p.vy *= .86;
-        p.x += p.vx;
-        p.y += p.vy;
-        const glow = .48 + .45 * Math.sin(time * 4 + p.pulse);
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(${p.hue}, 100%, ${62 + glow * 20}%, ${p.alpha})`;
-        ctx.shadowColor = `hsla(${p.hue}, 100%, 64%, .85)`;
-        ctx.shadowBlur = 12 + glow * 14;
-        ctx.arc(p.x, p.y, p.r * (1 + glow * .45), 0, Math.PI * 2);
-        ctx.fill();
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = 'rgba(255, 88, 160, .72)';
+      ctx.shadowColor = 'rgba(255, 40, 145, .9)';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      for (let i = 0; i <= 220; i++) {
+        const pt = heartPoint(i / 220 * Math.PI * 2, 13.35);
+        if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
       }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
 
-      ctx.shadowBlur = 0;
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = 'rgba(120, 245, 255, .18)';
-      ctx.lineWidth = 1;
-      for (let y = 0; y < innerHeight; y += 48) {
-        ctx.beginPath();
-        ctx.moveTo(0, y + Math.sin(time + y * .01) * 8);
-        ctx.lineTo(innerWidth, y + Math.cos(time + y * .01) * 8);
-        ctx.stroke();
-      }
       requestAnimationFrame(draw);
     }
-
-    window.addEventListener('resize', init);
-    init();
     requestAnimationFrame(draw);
+
+    let lastTap = 0;
+    window.addEventListener('pointerdown', (e) => {
+      const now = Date.now();
+      if (now - lastTap < 120) return;
+      lastTap = now;
+      const el = document.createElement('div');
+      el.className = 'tap-heart';
+      el.textContent = Math.random() > .5 ? '💗' : '💖';
+      el.style.left = e.clientX + 'px';
+      el.style.top = e.clientY + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }, { passive: true });
   </script>
 </body>
 </html>
