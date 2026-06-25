@@ -3,172 +3,285 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>爱心代码</title>
+  <title>炫酷心动代码</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      background: radial-gradient(circle at 50% 40%, #30103f 0%, #080516 48%, #02030a 100%);
+      color: #fff;
+    }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .heart-wrap {
+      position: relative;
+      width: min(58vw, 430px);
+      height: min(58vw, 430px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 28px rgba(255, 35, 135, .75));
+      animation: heartbeat 1.15s ease-in-out infinite;
+    }
+    .heart {
+      position: relative;
+      width: 48%;
+      height: 48%;
+      background: linear-gradient(135deg, #ff2a8a 0%, #ff0055 42%, #ff7ac8 100%);
+      transform: rotate(-45deg);
+      border-radius: 18% 0 18% 0;
+      box-shadow:
+        0 0 22px rgba(255, 0, 102, .95),
+        0 0 60px rgba(255, 0, 153, .72),
+        inset -14px 14px 24px rgba(255,255,255,.18),
+        inset 12px -18px 28px rgba(80,0,60,.32);
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
       width: 100%;
       height: 100%;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 30%, #33142a 0%, #120718 45%, #050208 100%);
-      font-family: "Microsoft YaHei", Arial, sans-serif;
+      background: inherit;
+      border-radius: 50%;
+      box-shadow: inherit;
     }
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
+    .heart::before { top: -50%; left: 0; }
+    .heart::after { top: 0; left: 50%; }
+    .ring {
+      position: absolute;
+      inset: 2%;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.22);
+      box-shadow: 0 0 28px rgba(0, 215, 255, .5), inset 0 0 28px rgba(255, 40, 140, .25);
+      animation: rotate 8s linear infinite;
     }
-    .text {
+    .ring::before,
+    .ring::after {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,.22);
+    }
+    .ring::after {
+      inset: 18%;
+      border-color: rgba(0, 234, 255, .25);
+      animation: rotate 5s linear infinite reverse;
+    }
+    .halo {
+      position: absolute;
+      inset: -22%;
+      border-radius: 50%;
+      background: conic-gradient(from 90deg, transparent, rgba(0,245,255,.32), transparent, rgba(255,0,153,.42), transparent);
+      filter: blur(18px);
+      opacity: .78;
+      animation: rotate 6s linear infinite;
+    }
+    .copy {
       position: fixed;
       left: 50%;
-      top: 72%;
-      transform: translate(-50%, -50%);
-      color: rgba(255,255,255,.92);
+      bottom: 7vh;
+      transform: translateX(-50%);
+      z-index: 3;
+      width: min(90vw, 820px);
       text-align: center;
-      letter-spacing: 2px;
-      text-shadow: 0 0 18px rgba(255, 75, 132, .9);
-      user-select: none;
       pointer-events: none;
     }
-    .text h1 {
-      font-size: clamp(34px, 5vw, 68px);
-      margin-bottom: 14px;
-      font-weight: 800;
+    .copy h1 {
+      font-size: clamp(32px, 6vw, 78px);
+      line-height: 1.08;
+      letter-spacing: .08em;
+      background: linear-gradient(90deg, #fff, #ff8dd3, #76f7ff, #fff);
+      background-size: 260% auto;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 28px rgba(255, 60, 160, .35);
+      animation: shine 3.6s linear infinite;
     }
-    .text p {
-      font-size: clamp(15px, 2vw, 24px);
-      opacity: .86;
+    .copy p {
+      margin-top: 16px;
+      font-size: clamp(15px, 2.2vw, 24px);
+      color: rgba(236, 248, 255, .86);
+      letter-spacing: .18em;
+      text-shadow: 0 0 14px rgba(0, 220, 255, .42);
     }
-    .tips {
+    .scanline {
       position: fixed;
-      right: 18px;
-      bottom: 16px;
-      color: rgba(255,255,255,.45);
-      font-size: 13px;
-      user-select: none;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.035) 0 1px, transparent 1px 5px);
+      mix-blend-mode: overlay;
+      opacity: .34;
+    }
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      box-shadow: inset 0 0 160px rgba(0,0,0,.82);
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      12% { transform: scale(1.12); }
+      24% { transform: scale(.98); }
+      38% { transform: scale(1.17); }
+      55% { transform: scale(1); }
+    }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes shine { to { background-position: 260% center; } }
+    @media (max-width: 600px) {
+      .heart-wrap { width: 76vw; height: 76vw; }
+      .copy { bottom: 8vh; }
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-  <div class="text">
-    <h1>❤ 心动代码 ❤</h1>
-    <p>愿每一次努力，都被温柔以待</p>
+  <canvas id="bg"></canvas>
+  <div class="stage">
+    <div class="heart-wrap">
+      <div class="halo"></div>
+      <div class="ring"></div>
+      <div class="heart"></div>
+    </div>
   </div>
-  <div class="tips">可最小化浏览器后台运行</div>
+  <div class="copy">
+    <h1>心动加载中</h1>
+    <p>LOVE SIGNAL · 正在为你闪烁</p>
+  </div>
+  <div class="scanline"></div>
+  <div class="vignette"></div>
 
   <script>
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
+    let w, h, cx, cy, scale;
+    const particles = [];
+    const sparks = [];
+    const rand = (a, b) => Math.random() * (b - a) + a;
 
     function resize() {
-      w = canvas.width = window.innerWidth * devicePixelRatio;
-      h = canvas.height = window.innerHeight * devicePixelRatio;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = Math.floor(innerWidth * dpr);
+      h = canvas.height = Math.floor(innerHeight * dpr);
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = innerWidth / 2;
+      cy = innerHeight / 2 - innerHeight * 0.05;
+      scale = Math.min(innerWidth, innerHeight) / 34;
     }
-    window.addEventListener('resize', resize);
-    resize();
 
-    function heartPoint(t, scale) {
+    function heartPoint(t) {
       const x = 16 * Math.pow(Math.sin(t), 3);
       const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-      return { x: x * scale, y: y * scale };
+      return { x: cx + x * scale, y: cy + y * scale };
     }
 
-    class Particle {
-      constructor() { this.reset(true); }
-      reset(randomStart = false) {
-        const scale = Math.min(window.innerWidth, window.innerHeight) / 38;
-        const t = Math.random() * Math.PI * 2;
-        const p = heartPoint(t, scale);
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2 - 55;
-        this.baseX = cx + p.x;
-        this.baseY = cy + p.y;
-        this.x = randomStart ? Math.random() * window.innerWidth : this.baseX;
-        this.y = randomStart ? Math.random() * window.innerHeight : this.baseY;
-        this.vx = 0;
-        this.vy = 0;
-        this.size = Math.random() * 2.4 + 1.1;
-        this.alpha = Math.random() * .45 + .55;
-        this.color = Math.random() > .55 ? '#ff4f8b' : (Math.random() > .5 ? '#ff90b8' : '#ffd1df');
-        this.float = Math.random() * Math.PI * 2;
-        this.speed = Math.random() * .015 + .008;
-      }
-      update(time) {
-        const pulse = 1 + Math.sin(time * 0.003) * 0.045;
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2 - 55;
-        const tx = cx + (this.baseX - cx) * pulse + Math.sin(this.float + time * this.speed) * 4;
-        const ty = cy + (this.baseY - cy) * pulse + Math.cos(this.float + time * this.speed) * 4;
-        this.vx += (tx - this.x) * 0.018;
-        this.vy += (ty - this.y) * 0.018;
-        this.vx *= 0.84;
-        this.vy *= 0.84;
-        this.x += this.vx;
-        this.y += this.vy;
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.shadowBlur = 16;
-        ctx.shadowColor = this.color;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+    function makeParticle() {
+      const t = rand(0, Math.PI * 2);
+      const p = heartPoint(t);
+      return {
+        x: rand(0, innerWidth),
+        y: rand(0, innerHeight),
+        tx: p.x,
+        ty: p.y,
+        vx: 0,
+        vy: 0,
+        r: rand(1.2, 3.2),
+        hue: rand(310, 380),
+        alpha: rand(.42, .95),
+        pulse: rand(0, Math.PI * 2)
+      };
     }
 
     function init() {
-      const count = Math.floor(Math.min(980, Math.max(460, window.innerWidth * window.innerHeight / 1850)));
-      particles = Array.from({ length: count }, () => new Particle());
-    }
-    init();
-    window.addEventListener('resize', init);
-
-    function drawHeartLine(time) {
-      const scale = Math.min(window.innerWidth, window.innerHeight) / 38;
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2 - 55;
-      const pulse = 1 + Math.sin(time * 0.003) * 0.045;
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255, 120, 165, .38)';
-      ctx.lineWidth = 2;
-      ctx.shadowBlur = 22;
-      ctx.shadowColor = '#ff4f8b';
-      ctx.beginPath();
-      for (let i = 0; i <= 360; i++) {
-        const t = i / 360 * Math.PI * 2;
-        const p = heartPoint(t, scale * pulse);
-        const x = cx + p.x;
-        const y = cy + p.y;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      resize();
+      particles.length = 0;
+      const count = Math.min(900, Math.max(360, Math.floor(innerWidth * innerHeight / 1700)));
+      for (let i = 0; i < count; i++) particles.push(makeParticle());
+      sparks.length = 0;
+      for (let i = 0; i < 120; i++) {
+        sparks.push({
+          x: rand(0, innerWidth), y: rand(0, innerHeight),
+          vx: rand(-.22, .22), vy: rand(-.45, .15),
+          r: rand(.5, 1.9), a: rand(.1, .8), hue: rand(180, 330)
+        });
       }
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
     }
 
-    function animate(time) {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    let last = 0;
+    function draw(now) {
+      const time = now * 0.001;
+      const beat = 1 + Math.sin(time * Math.PI * 2 / 1.15) * 0.035 + Math.max(0, Math.sin(time * Math.PI * 4 / 1.15)) * 0.035;
 
-      const grad = ctx.createRadialGradient(window.innerWidth/2, window.innerHeight/2, 40, window.innerWidth/2, window.innerHeight/2, window.innerWidth*.65);
-      grad.addColorStop(0, 'rgba(255, 75, 132, .16)');
-      grad.addColorStop(1, 'rgba(255, 75, 132, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(innerWidth, innerHeight) * .72);
+      bg.addColorStop(0, 'rgba(255, 0, 120, .22)');
+      bg.addColorStop(.42, 'rgba(18, 18, 62, .45)');
+      bg.addColorStop(1, 'rgba(0, 0, 8, .92)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, innerWidth, innerHeight);
 
-      drawHeartLine(time);
-      particles.forEach(p => { p.update(time); p.draw(); });
-      requestAnimationFrame(animate);
+      ctx.globalCompositeOperation = 'lighter';
+      for (const s of sparks) {
+        s.x += s.vx; s.y += s.vy;
+        if (s.y < -10) { s.y = innerHeight + 10; s.x = rand(0, innerWidth); }
+        if (s.x < -10) s.x = innerWidth + 10;
+        if (s.x > innerWidth + 10) s.x = -10;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${s.hue}, 100%, 70%, ${s.a})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const t = (i / particles.length) * Math.PI * 2 + Math.sin(time * .65 + i) * .025;
+        const target = heartPoint(t);
+        p.tx = cx + (target.x - cx) * beat;
+        p.ty = cy + (target.y - cy) * beat;
+        p.vx += (p.tx - p.x) * .015;
+        p.vy += (p.ty - p.y) * .015;
+        p.vx *= .86;
+        p.vy *= .86;
+        p.x += p.vx;
+        p.y += p.vy;
+        const glow = .48 + .45 * Math.sin(time * 4 + p.pulse);
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue}, 100%, ${62 + glow * 20}%, ${p.alpha})`;
+        ctx.shadowColor = `hsla(${p.hue}, 100%, 64%, .85)`;
+        ctx.shadowBlur = 12 + glow * 14;
+        ctx.arc(p.x, p.y, p.r * (1 + glow * .45), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = 'rgba(120, 245, 255, .18)';
+      ctx.lineWidth = 1;
+      for (let y = 0; y < innerHeight; y += 48) {
+        ctx.beginPath();
+        ctx.moveTo(0, y + Math.sin(time + y * .01) * 8);
+        ctx.lineTo(innerWidth, y + Math.cos(time + y * .01) * 8);
+        ctx.stroke();
+      }
+      requestAnimationFrame(draw);
     }
-    requestAnimationFrame(animate);
+
+    window.addEventListener('resize', init);
+    init();
+    requestAnimationFrame(draw);
   </script>
 </body>
 </html>
