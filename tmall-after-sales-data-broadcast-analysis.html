@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026天猫售后数据播报搭建复盘</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Microsoft YaHei", "PingFang SC", Arial, sans-serif; color:#152033; background:#f5f7fb; line-height:1.75; }
+    .hero { position:relative; padding:72px 7vw 62px; color:#fff; overflow:hidden; background: radial-gradient(circle at 15% 18%, rgba(56,189,248,.48), transparent 28%), radial-gradient(circle at 86% 20%, rgba(168,85,247,.42), transparent 26%), linear-gradient(135deg,#0f172a 0%,#1e3a8a 55%,#312e81 100%); }
+    .hero::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size:56px 56px; mask-image:radial-gradient(circle at center, black, transparent 72%); }
+    .hero-inner { position:relative; z-index:1; max-width:1180px; margin:auto; }
+    .badge { display:inline-flex; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28); font-weight:700; font-size:14px; margin-bottom:18px; }
+    h1 { margin:0; font-size:clamp(34px,6vw,68px); letter-spacing:-.03em; line-height:1.12; }
+    .hero p { max-width:850px; margin:20px 0 0; color:#dbeafe; font-size:20px; }
+    .wrap { max-width:1180px; margin:-34px auto 60px; padding:0 22px; position:relative; z-index:2; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
+    .stat { background:#fff; border-radius:22px; padding:22px; box-shadow:0 18px 45px rgba(15,23,42,.10); border:1px solid #e2e8f0; }
+    .stat b { display:block; font-size:36px; color:#2563eb; line-height:1; }
+    .stat span { color:#64748b; font-size:14px; }
+    section { background:#fff; border:1px solid #e2e8f0; border-radius:26px; padding:30px; margin:22px 0; box-shadow:0 16px 42px rgba(15,23,42,.07); }
+    h2 { margin:0 0 16px; font-size:30px; color:#0f172a; display:flex; gap:10px; align-items:center; }
+    h2::before { content:""; width:10px; height:30px; border-radius:999px; background:linear-gradient(180deg,#2563eb,#06b6d4); }
+    h3 { margin:0 0 10px; color:#0f172a; font-size:22px; }
+    .lead { color:#475569; font-size:17px; margin-top:0; }
+    .flow { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:20px; }
+    .step { padding:18px 14px; border-radius:18px; background:linear-gradient(180deg,#eff6ff,#fff); border:1px solid #bfdbfe; min-height:142px; }
+    .step .num { width:38px; height:38px; border-radius:14px; display:grid; place-items:center; background:#2563eb; color:white; font-weight:900; margin-bottom:12px; }
+    .step strong { display:block; color:#0f172a; margin-bottom:6px; }
+    .step p { margin:0; font-size:14px; color:#475569; }
+    .layers { display:grid; grid-template-columns:1fr; gap:16px; }
+    .layer-card { border:1px solid #e2e8f0; border-radius:22px; padding:22px; background:#f8fafc; }
+    .layer-card p { color:#475569; margin:0 0 14px; }
+    .layer-card ul { list-style:none; padding:0; margin:0; display:grid; gap:12px; }
+    .layer-card li { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:14px; }
+    .field-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+    .field-tags span { font-size:12px; padding:4px 8px; border-radius:999px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .method-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .method { padding:22px; border-radius:22px; background:linear-gradient(135deg,#fff,#f8fafc); border:1px solid #e2e8f0; }
+    .method b { color:#2563eb; }
+    .method p { color:#475569; margin-bottom:0; }
+    .two-col { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; }
+    .checklist { margin:0; padding-left:22px; }
+    .checklist li { margin:9px 0; }
+    .dash-list { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-height:480px; overflow:auto; }
+    .dash-list li { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px; display:flex; justify-content:space-between; gap:10px; }
+    .dash-list span { color:#2563eb; font-weight:700; white-space:nowrap; }
+    .callout { background:linear-gradient(135deg,#ecfeff,#eff6ff); border:1px solid #bae6fd; border-radius:20px; padding:20px; color:#334155; }
+    .timeline { display:grid; gap:14px; }
+    .tl { display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:start; }
+    .tl b { color:#2563eb; }
+    .tl div { background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:14px; }
+    footer { text-align:center; color:#64748b; padding:28px 0 50px; }
+    @media (max-width: 960px) { .stats,.method-grid,.flow,.two-col,.dash-list { grid-template-columns:1fr 1fr; } .flow { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width: 640px) { .stats,.method-grid,.flow,.two-col,.dash-list { grid-template-columns:1fr; } section { padding:22px; } .tl { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="badge">钉钉 AI 表格复盘 · 人才培养版</div>
+      <h1>《2026天猫售后数据播报》<br/>是怎么做出来的？</h1>
+      <p>这不是一张简单表格，而是一套“售后数据源 → 指标加工 → 看板播报 → 复盘管理”的轻量数据系统。下面把它拆成可学习、可复制、可带教的搭建大纲和方法论。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="stats">
+      <div class="stat"><b>27</b><span>张业务数据表</span></div>
+      <div class="stat"><b>27</b><span>个看板/仪表盘</span></div>
+      <div class="stat"><b>926</b><span>个字段支撑自动统计</span></div>
+      <div class="stat"><b>304</b><span>个图表组件用于播报</span></div>
+    </div>
+
+    <section>
+      <h2>一、整体结论：它本质上是一套售后数据播报系统</h2>
+      <p class="lead">从表结构看，这个钉钉表格不是单纯用来“存数据”，而是围绕天猫售后日常管理，把每日原始数据、客服表现、店铺情况、渠道趋势、差评分析、一次性解决率、绩效结果做成了一套可持续更新的管理看板。</p>
+      <div class="flow">
+        <div class="step"><div class="num">01</div><strong>数据导入</strong><p>每天把天猫、差评、一次性解决率、苏宁等来源数据放入数据源表。</p></div>
+        <div class="step"><div class="num">02</div><strong>字段标准化</strong><p>统一日期、客服、店铺、渠道、指标口径，避免后续统计混乱。</p></div>
+        <div class="step"><div class="num">03</div><strong>指标计算</strong><p>用公式、筛选汇总字段生成满意度、接待量、转化、退款、差评等指标。</p></div>
+        <div class="step"><div class="num">04</div><strong>日/月汇总</strong><p>拆出日维度、月维度，支持每天看执行、每月看趋势。</p></div>
+        <div class="step"><div class="num">05</div><strong>看板呈现</strong><p>按客服、店铺、渠道、人员分组做可视化看板。</p></div>
+        <div class="step"><div class="num">06</div><strong>播报复盘</strong><p>从数据中提炼异常、亮点、差距，形成群内日报和管理动作。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>二、表格结构分层：从源数据到播报结果</h2>
+      <div class="layers">
+        <div class="layer-card"><h3>1）数据源层：每天原始数据的入口</h3><p>这一层负责承接每天导入的数据，字段尽量贴近原始报表，同时增加必要的日期、店铺、客服、渠道、分类字段，方便后续自动汇总。</p><ul><li><strong>天猫-每日数据源（下半年）</strong><div class="field-tags"><span>月份</span><span>店铺</span><span>旺旺</span><span>询单-&gt;最终付款成功率</span><span>询单人数</span><span>询单-&gt;最终付款人数</span><span>销售额</span><span>销售量</span><span>客单价</span><span>首次响应(秒)</span><span>平均响应(秒)</span><span>回复率</span><span>咨询人数</span><span>接待人数</span><span>客户满意率</span><span>平均回合数(接待人数)</span><span>转出人数</span><span>转入人数</span><span>直接接待人数</span><span>客服发起</span></div></li><li><strong>天猫-每日数据源（上半年）</strong><div class="field-tags"><span>月份</span><span>店铺</span><span>旺旺</span><span>询单-&gt;最终付款成功率</span><span>询单人数</span><span>询单-&gt;最终付款人数</span><span>销售额</span><span>销售量</span><span>客单价</span><span>首次响应(秒)</span><span>平均响应(秒)</span><span>回复率</span><span>咨询人数</span><span>接待人数</span><span>客户满意率</span><span>平均回合数(接待人数)</span><span>转出人数</span><span>转入人数</span><span>直接接待人数</span><span>客服发起</span></div></li><li><strong>天猫差评统计分析</strong><div class="field-tags"><span>月份</span><span>店铺</span><span>客服组</span><span>客服子账号</span><span>顾客名称</span><span>客户来源</span><span>订单号</span><span>时间</span><span>买家购买商品名称</span><span>买家购买商品ID</span><span>订单金额</span><span>订单状态</span><span>退货退款状态</span><span>退款申请时间</span><span>退货退款类型</span><span>退货退款原因</span><span>退款金额</span><span>会话轮次</span><span>聊天商品ID</span><span>聊天商品分类</span></div></li><li><strong>一次性解决率数据源</strong><div class="field-tags"><span>月份</span><span>店铺名</span><span>客服人员</span><span>一次性解决率</span><span>日期</span><span>是否是因为客服没有接待好导致（&lt;90%）</span><span>什么问题</span><span>接待售后3日内再次接待人数</span><span>没有处理好人数</span><span>人为因素占比</span><span>周期</span><span>接待售后人数</span><span>分组</span></div></li><li><strong>苏宁客服登记数据源</strong><div class="field-tags"><span>日期</span><span>班次</span><span>接待账号</span><span>接待人</span><span>接待人数</span><span>平均响应</span><span>三分钟响应率</span><span>满意率</span><span>差评数</span><span>好评数</span><span>剔除后好评数</span><span>剔除后差评数</span><span>总评价数量</span><span>剔除后个人当天满意率</span><span>剔除后当天三分钟响应率</span><span>剔除后当天平均响应</span></div></li><li><strong>苏宁平台售后数据源</strong><div class="field-tags"><span>日期</span><span>对应日期</span><span>专项</span><span>旺旺分组名称</span><span>姓名</span><span>旺旺名</span><span>大品类</span><span>小组划分</span><span>品牌</span><span>合作主体公司名称</span><span>供应商编码</span><span>工作内容</span><span>人均服务量</span><span>询单转换率(延1)</span><span>客单价</span><span>总销售额</span><span>退款金额</span><span>实际销售额</span><span>接待人数</span><span>询单人数</span></div></li></ul></div>
+        <div class="layer-card"><h3>2）基础汇总层：把原始数据变成管理指标</h3><p>这一层按渠道、客服、店铺等管理维度做聚合，字段中大量使用 number 和 formula，说明主要承担指标计算、目标差距、占比和结果判断。</p><ul><li><strong>渠道汇总情况</strong><div class="field-tags"><span>月份</span><span>售后客服总咨询人数</span><span>月历</span><span>售后客服总接待人数</span><span>售后客服总平均响应</span><span>售后很满意数量</span><span>售后满意数量</span><span>售后一般数量</span><span>售后不满意</span><span>售后很不满意数量</span><span>售后评价参与量</span><span>售后满意度</span><span>售后总差评数</span><span>售后客服一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>客服汇总情况</strong><div class="field-tags"><span>月份</span><span>咨询人数</span><span>月历</span><span>接待人数</span><span>平均响应</span><span>很满意数量</span><span>满意数量</span><span>一般数量</span><span>不满意</span><span>很不满意数量</span><span>总评价参与量</span><span>满意度</span><span>差评数</span><span>售后一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>店铺汇总情况</strong><div class="field-tags"><span>月份</span><span>售后客服总咨询人数</span><span>月历</span><span>售后客服总接待人数</span><span>售后客服总平均响应</span><span>售后很满意数量</span><span>售后满意数量</span><span>售后一般数量</span><span>售后不满意</span><span>售后很不满意数量</span><span>售后评价参与量</span><span>售后满意度</span><span>售后总差评数</span><span>售后客服一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>店铺天猫体验分</strong><div class="field-tags"><span>日期</span><span>店铺</span><span>分数目标4.80</span><span>排名目标前30%</span><span>宝贝质量（30%）分数目标4.8</span><span>宝贝质量（30%）排名</span><span>物流速度（25%）分数目标4.8</span><span>物流速度（25%）排名</span><span>服务保障（45%）目标分数5.0</span><span>服务保障（45%）排名</span><span>商品负反馈率（权重70%）目标＜0.4198%</span><span>商品负反馈率（权重70%）目标分数4.8</span><span>商品好评率（权重30%）目标＞96.50%</span><span>商品好评率（权重30%）目标分数4.8</span><span>48小时揽收及时率目标99.92%</span><span>48小时揽收及时率目标分数5.0</span><span>物流到货时长目标＜62.62h</span><span>物流到货时长目标分数4.2</span><span>3分钟人工响应率目标&gt;99%</span><span>3分钟人工响应率目标分数5.0</span></div></li></ul></div>
+        <div class="layer-card"><h3>3）日/月分析层：支持日报和月度复盘</h3><p>这一层利用筛选汇总类字段把每日明细沉淀成日维度、月维度，便于观察趋势、排名、异常波动和绩效结果。</p><ul><li><strong>月-渠道情况</strong><div class="field-tags"><span>月份</span><span>售后客服总咨询人数</span><span>月历</span><span>售后客服总接待人数</span><span>售后客服总平均响应</span><span>售后很满意数量</span><span>售后满意数量</span><span>售后一般数量</span><span>售后不满意</span><span>售后很不满意数量</span><span>售后评价参与量</span><span>售后满意度</span><span>售后总差评数</span><span>售后客服一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>月-客服情况</strong><div class="field-tags"><span>月份</span><span>咨询人数</span><span>月历</span><span>接待人数</span><span>平均响应</span><span>很满意数量</span><span>满意数量</span><span>一般数量</span><span>不满意</span><span>很不满意数量</span><span>总评价参与量</span><span>满意度</span><span>差评数</span><span>售后一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>月-店铺情况</strong><div class="field-tags"><span>月份</span><span>售后客服总咨询人数</span><span>月历</span><span>售后客服总接待人数</span><span>售后客服总平均响应</span><span>售后很满意数量</span><span>售后满意数量</span><span>售后一般数量</span><span>售后不满意</span><span>售后很不满意数量</span><span>售后评价参与量</span><span>售后满意度</span><span>售后总差评数</span><span>售后客服一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>日-客服情况</strong><div class="field-tags"><span>导入日期</span><span>咨询人数</span><span>日期</span><span>接待人数</span><span>平均响应</span><span>很满意数量</span><span>满意数量</span><span>一般数量</span><span>不满意</span><span>很不满意数量</span><span>总评价参与量</span><span>满意度</span><span>差评数</span><span>售后一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span></div></li><li><strong>售后绩效</strong><div class="field-tags"><span>日期</span><span>绩效总分</span><span>满意度评分值</span><span>满意度</span><span>响应</span><span>响应评分值</span><span>接待人数</span><span>接待人数评分值</span><span>售后完结率</span><span>售后完结率评分值</span><span>店铺体验分星级</span><span>店铺体验分星级评分值</span><span>上级评价评分值</span><span>回复率</span><span>目标最高人数</span><span>底线最低人数</span><span>对应人员</span><span>接待客服</span><span>月份</span><span>3日内因客服原因造成再次进线人数</span></div></li></ul></div>
+        <div class="layer-card"><h3>4）配置与辅助层：让统计可以按人、店、角色分布复用</h3><p>这一层更像字典表/配置表，用来维护人员、店铺、角色、分布关系，减少每次手动筛选和重复配置。</p><ul><li><strong>人员使用情况</strong><div class="field-tags"><span>客服</span><span>客服使用名称</span><span>分组</span></div></li><li><strong>店铺使用情况</strong><div class="field-tags"><span>店铺</span><span>是否有机器人承接</span><span>是否退店</span></div></li><li><strong>人员分布</strong><div class="field-tags"><span>客服人员</span><span>账号名</span><span>分组</span></div></li><li><strong>月-饼饼情况</strong><div class="field-tags"><span>月份</span><span>人工售后接待人数</span><span>人工售后付款人数</span><span>人工售后询单</span><span>售后无成交询单人数</span><span>很不满意</span><span>不满意</span><span>一般</span><span>很满意</span><span>非常满意</span><span>满意率</span><span>未回复人数</span><span>回复率 1</span><span>平均响应时长</span><span>首次响应时长</span><span>接待人数</span><span>承接占比</span><span>询单人数</span><span>询单占比</span><span>客单价</span></div></li><li><strong>月-店铺饼饼情况</strong><div class="field-tags"><span>月份</span><span>月历</span><span>很满意数量</span><span>满意数量</span><span>一般数量</span><span>不满意</span><span>很不满意数量</span><span>总评价参与量</span><span>满意度</span><span>差评数</span><span>售后一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span><span>店铺</span><span>饼饼咨询人数</span><span>是否退店</span></div></li><li><strong>日-店铺饼饼情况</strong><div class="field-tags"><span>月份</span><span>月历</span><span>很满意数量</span><span>满意数量</span><span>一般数量</span><span>不满意</span><span>很不满意数量</span><span>总评价参与量</span><span>满意度</span><span>差评数</span><span>售后一次解决率</span><span>平均响应目标</span><span>满意率目标</span><span>售后一次解决率目标</span><span>响应差距</span><span>满意率差距</span><span>售后一次解决率差距</span><span>店铺</span><span>饼饼咨询人数</span><span>是否退店</span></div></li></ul></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三、关键制作逻辑：为什么它能自动播报</h2>
+      <div class="two-col">
+        <div>
+          <h3>核心不是“表多”，而是把口径拆清楚</h3>
+          <ul class="checklist">
+            <li><strong>日期口径：</strong>所有数据源都保留日期字段，才能做每日、每月、上半年/下半年对比。</li>
+            <li><strong>人员口径：</strong>客服字段统一后，才能自动统计个人接待量、解决率、差评、绩效。</li>
+            <li><strong>店铺口径：</strong>店铺字段标准化后，才能做店铺体验分、退款、满意度、差评分布。</li>
+            <li><strong>渠道口径：</strong>按渠道拆分后，能看到问题来自哪个来源，方便安排跟进动作。</li>
+            <li><strong>结果口径：</strong>通过公式字段把“原始数值”加工成“是否达标、差距多少、占比多少”。</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <h3>一句话还原搭建方式</h3>
+          <p>先确定每天要看什么指标，再反推需要哪些原始字段；把原始字段放进数据源表，再用筛选汇总、公式和视图，把数据自动拆成客服、店铺、渠道、日期四类管理看板。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>四、方法论：6 步复制一张 AI 数据播报表</h2>
+      <div class="method-grid">
+        <div class="method"><b>Step 1：先定播报目标</b><p>不要先建表，先问每天群里要播什么：总量、异常、排名、差距、待跟进事项。</p></div>
+        <div class="method"><b>Step 2：拆指标口径</b><p>把“售后表现好不好”拆成接待、退款、满意度、差评、解决率、绩效等可统计指标。</p></div>
+        <div class="method"><b>Step 3：设计数据源表</b><p>数据源表尽量少加工，保留原始字段，并补充日期、人员、店铺、渠道等关键维度。</p></div>
+        <div class="method"><b>Step 4：做汇总表</b><p>用筛选汇总和公式，把源数据自动汇总到客服、店铺、渠道、日/月维度。</p></div>
+        <div class="method"><b>Step 5：做视图和看板</b><p>同一份数据，给组长看总览，给客服看个人，给运营看店铺，给复盘看趋势。</p></div>
+        <div class="method"><b>Step 6：沉淀播报模板</b><p>把看板结论固定成日报话术：今日表现、异常提醒、重点跟进、明日动作。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>五、适合带教小伙伴的学习大纲</h2>
+      <div class="timeline">
+        <div class="tl"><b>第 1 课</b><div><strong>看懂业务问题：</strong>为什么售后要看数据？每天哪些数据会影响管理动作？</div></div>
+        <div class="tl"><b>第 2 课</b><div><strong>看懂数据源：</strong>让小伙伴先认识每日数据源、差评表、一次性解决率表，每个字段代表什么。</div></div>
+        <div class="tl"><b>第 3 课</b><div><strong>学会字段标准化：</strong>统一日期、客服、店铺、渠道、状态，不然后面所有汇总都会乱。</div></div>
+        <div class="tl"><b>第 4 课</b><div><strong>学会汇总与公式：</strong>从一个指标开始练，比如“按客服统计接待量/差评数/解决率”。</div></div>
+        <div class="tl"><b>第 5 课</b><div><strong>学会看板表达：</strong>不是把图放上去，而是让看板能回答“哪里异常、谁要跟进、今天做什么”。</div></div>
+        <div class="tl"><b>第 6 课</b><div><strong>学会用 AI 辅助：</strong>让 AI 帮忙生成字段说明、日报结论、异常分析、复盘框架，但口径要由人确认。</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>六、看板布局：它不是一张表，而是一组角色视图</h2>
+      <p class="lead">当前表格中包含多个看板/仪表盘，说明它已经按不同角色或店铺做了拆分展示。适合后续给团队成员讲：同一套底层数据，可以输出多个不同视角。</p>
+      <ul class="dash-list"><li>果豚<span>3 个图表</span></li><li>厨房<span>3 个图表</span></li><li>小树莓<span>3 个图表</span></li><li>巨嘴鸟<span>3 个图表</span></li><li>五巨头<span>3 个图表</span></li><li>长耳兔<span>3 个图表</span></li><li>月度播报<span>23 个图表</span></li><li>鲁婉欣<span>6 个图表</span></li><li>渠道汇总<span>77 个图表</span></li><li>月度差评分析情况<span>8 个图表</span></li><li>月一次性解决率<span>7 个图表</span></li><li>云卓<span>4 个图表</span></li><li>月接待人数-客服<span>7 个图表</span></li><li>上月度差评分析情况<span>7 个图表</span></li><li>月度一次性解决率情况<span>8 个图表</span></li><li>苏宁平台月数据统计<span>11 个图表</span></li><li>苏宁客服登记月数据统计<span>31 个图表</span></li><li>月度咨询人数<span>11 个图表</span></li><li>周度播报<span>23 个图表</span></li><li>上月度播报<span>23 个图表</span></li><li>鲁婉儿<span>6 个图表</span></li><li>李嘉健<span>6 个图表</span></li><li>卢湛明<span>6 个图表</span></li><li>莫明峰<span>6 个图表</span></li><li>区梓灏<span>6 个图表</span></li><li>杨静敏<span>6 个图表</span></li><li>饼饼<span>4 个图表</span></li></ul>
+    </section>
+
+    <section>
+      <h2>七、后续优化建议</h2>
+      <ul class="checklist">
+        <li><strong>增加数据导入检查：</strong>每天导入后自动检查日期、重复记录、空值、异常大值，避免重复追加。</li>
+        <li><strong>建立字段说明页：</strong>把每个核心指标的定义、来源表、计算方式写清楚，方便新人学习。</li>
+        <li><strong>沉淀日报模板：</strong>把“今日总览、异常波动、个人排名、重点跟进、明日提醒”固定成可复制模板。</li>
+        <li><strong>分层授权：</strong>组长看全局，客服看个人，运营看店铺，减少信息过载。</li>
+        <li><strong>用 AI 做结论初稿：</strong>让 AI 根据汇总表生成日报初稿，人只负责核对口径和补充管理动作。</li>
+      </ul>
+    </section>
+
+
+    <section>
+      <h2>八、带教时可以重点讲清楚的 4 个设计点</h2>
+      <div class="method-grid">
+        <div class="method"><b>1）数据源表不是给人看的</b><p>数据源层的价值是承接每日导入，字段要稳定、口径要统一、不要随意改名。只要底层乱，后面的汇总、看板和日报都会错。</p></div>
+        <div class="method"><b>2）维度表是整套系统的字典</b><p>人员、店铺、分组、渠道要统一维护。它解决的是“同一个客服/店铺被写成多个名字”的问题，是自动统计准确的基础。</p></div>
+        <div class="method"><b>3）汇总表负责把明细变成结论</b><p>明细只能回答“发生了什么”，汇总表才能回答“谁异常、哪里变差、哪个店铺要跟进、这个月趋势如何”。</p></div>
+        <div class="method"><b>4）看板不是越多越好</b><p>看板要按角色设计：组长看整体，客服看个人，运营看店铺，复盘看问题。每个看板都要能指向下一步动作。</p></div>
+        <div class="method"><b>5）AI 适合做初稿和复盘</b><p>AI 可以辅助生成日报、异常分析、字段说明和培训文档，但指标口径、责任判断和最终结论必须由业务负责人确认。</p></div>
+        <div class="method"><b>6）每天导入前要先防重复</b><p>日常维护时建议先检查日期、客服、店铺、订单/会话等关键字段，避免同一天数据重复导入导致播报失真。</p></div>
+      </div>
+    </section>
+
+  </main>
+  <footer>由办公小浣熊根据钉钉 AI 表格结构分析生成 · 适用于团队带教和流程复盘</footer>
+</body>
+</html>
